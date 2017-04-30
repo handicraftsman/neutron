@@ -1,9 +1,5 @@
 # Neutron
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/neutron`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -22,7 +18,64 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Rake & Neutron sample, which compiles Vala program:
+
+```ruby
+# File structure:
+#   ./Rakefile
+#   src/main.vala
+#   src/gui.vala
+#   src/http.vala
+# Required packages:
+#   glib-2.0
+#   gtk+-3.0
+#   libsoup-2.4
+# Target file:
+#   ./sample
+
+require 'neutron'
+require 'neutron/pkgconf'
+require 'neutron/cc'
+require 'neutron/valac'
+
+Dir.chdir('src/') # We'll compile our stuff here
+
+# Neutron::PkgConf checks package availability for us
+packages = Neutron::PkgConf.new %w[
+  glib-2.0
+  gtk+-3.0
+  libsoup-2.4
+]
+
+task :default => :build
+task :build => %w[valac link]
+
+# Compile our sources. Will not compile already compiled
+# files because Neutron.files() excludes them
+task :valac do
+  Neutron::Valac.compile(
+    *Neutron.files(Neutron::FileList['*.vala'], '.vala.o').sources, # Sources
+    args: packages.to_valac # Provide list of packages to valac
+  )
+end
+
+# Link .o files and libraries 
+task :link do
+  # Neutron:CC provides methods for using C and C++ compilers
+  Neutron::CC.link(
+    *Neutron::FileList['*.vala.o'],     # Object files
+    '../sample',                        # Target file
+    args: packages.to_cc(cflags: false) # Package list
+  )
+end
+```
+
+## ToDo
+
+1. Gem-like version-checker
+2. Shared-Object builder
+3. `install` tool (must install headers, binaries, shared objects)
+4. Finders for Boost, SFML, Qt, etc
 
 ## Development
 
@@ -32,7 +85,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/neutron. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/handicraftsman/neutron. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License

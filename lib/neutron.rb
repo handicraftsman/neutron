@@ -1,6 +1,5 @@
 require 'json'
 require 'open3'
-require 'rake'
 
 require 'neutron/version'
 
