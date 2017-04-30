@@ -72,6 +72,7 @@ end
 
 ## ToDo
 
+0. Docs
 1. Gem-like version-checker
 2. Shared-Object builder
 3. `install` tool (must install headers, binaries, shared objects)
