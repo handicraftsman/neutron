@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['nickolay02@inbox.ru']
 
   spec.summary       = 'Build-Tool toolkit for Ruby'
-  spec.description   = 'Build-Tool toolkit for Ruby. '
+  spec.description   = 'Build-Tool toolkit for Ruby'
   spec.homepage      = 'https://github.com/handicraftsman/neutron'
   spec.license       = 'MIT'
   
