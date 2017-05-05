@@ -5,9 +5,20 @@ module Neutron::CC
     o = {
       prog: 'cc',
       debug: false,
-      args: ''
+      args: '',
+      shared: false
     }.merge(opts)
-    Neutron.execute("#{o[:prog]} -o #{target} #{files.join(' ')} #{'-g' if o[:debug]} #{o[:args]}", must_success: true)
+    specific = ''
+    if o[:shared]
+      specific << ' -shared'
+    end
+    files.map! do |file|
+      File.expand_path(file)
+    end
+    Neutron.execute(
+      "#{o[:prog]} #{specific} -Wl,-rpath=./ -Wall -fpic -o #{target} #{files.join(' ')} #{'-g' if o[:debug]} #{o[:args]}",
+      must_success: true
+    )
   end
 
   def self.cc(*files, **opts)
@@ -17,6 +28,7 @@ module Neutron::CC
       args: ''
     }.merge(opts)
     files.each do |file|
+      file = File.expand_path(file)
       Neutron.execute("#{o[:prog]} -c #{file} #{'-g' if o[:debug]} #{o[:args]}", must_success: true)
     end
   end
@@ -28,6 +40,7 @@ module Neutron::CC
       args: ''
     }.merge(opts)
     files.each do |file|
+      file = File.expand_path(file)
       Neutron.execute("#{o[:prog]} -c #{file} #{'-g' if o[:debug]} #{o[:args]}", must_success: true)
     end
   end

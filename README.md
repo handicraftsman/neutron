@@ -37,6 +37,8 @@ require 'neutron'
 require 'neutron/pkgconf'
 require 'neutron/cc'
 require 'neutron/valac'
+require 'neutron/install'
+require 'neutron/clean'
 
 Dir.chdir('src/') # We'll compile our stuff here
 
@@ -68,15 +70,30 @@ task :link do
     args: packages.to_cc(cflags: false) # Package list
   )
 end
+
+task :install do
+  # Installs results to #{prefix}/bin/. Uses ENV['PREFIX'] or '/usr/' as prefix
+  Neutron.install(
+    '../sample',
+    'bin/'
+  )
+end
+
+task :clean do
+  # Removes all listed files
+  Neutron.clean(
+    *Neutron::FileList['*.vala.o'],
+    '../sample'
+  )
+end
 ```
 
 ## ToDo
 
-0. Docs
-1. Gem-like version-checker
-2. Shared-Object builder
-3. `install` tool (must install headers, binaries, shared objects)
-4. Finders for Boost, SFML, Qt, etc
+1. Docs
+2. Gem-like version-checker
+3. Finish Neutron::Valac module
+4. Finders for Boost, SFML, Qt, etc (should be implemented in separate gem)
 
 ## Development
 
